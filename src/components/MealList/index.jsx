@@ -9,10 +9,13 @@ export default class MealList extends Component {
     return (
       meals.map(meal => {
         return (
-          <MealBox  
+          <MealBox
+            key={meal.name}
             name={meal.name}
             img={meal.image}
             calories={meal.calories}
+            todaysFood={this.props.todaysFood}
+            deleteMeal={this.props.deleteMeal}
           ></MealBox> 
         );
       })
