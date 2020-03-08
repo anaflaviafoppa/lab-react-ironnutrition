@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import meals from './meals.json';
 
-import MealBox from './components/MealBox/index';
+import MealList from './components/MealList';
 import AddMeal from './components/AddMeal';
 
 //import meals from './meals';
@@ -15,11 +15,30 @@ class App extends Component {
 
     this.state = {
       meals: meals,
-      active:true
+      active:true,
+      query:  '',
     };
 
     this.showingForm = this.showingForm.bind(this);
     this.handleMealAddition = this.handleMealAddition.bind(this);
+    this.handleInputSearch = this.handleInputSearch.bind(this);
+  }
+
+  handleInputSearch(event){
+    const { name, value } = event.target;
+    
+    this.setState({
+      [name]: value
+    });
+  };
+
+  get filteredMeals(){
+    
+    const filteredMeals = this.state.meals.filter( meal =>{
+      return meal.name.toLowerCase().includes(this.state.query.toLowerCase());
+    });
+
+    return filteredMeals;
   }
 
   handleMealAddition(meal) {
@@ -35,32 +54,30 @@ class App extends Component {
   };
 
   render() {
-    const meals = this.state.meals
+    
     return (
       <div className="App">
         <h1>Ironutrition</h1>
+
+        <form>
+          <input
+            type="search"
+            name="query"
+            value={this.state.query}
+            onChange={this.handleInputSearch}
+            placeholder="Search for anything..."
+            autoComplete="off"
+          />
+        </form>
+
         <button onClick={this.showingForm}>{this.state.active ? 'Add a new Meal' : 'Hide the form'}</button>
         <div style={{display: this.state.active ? 'none' : 'block'}}>
-
           <AddMeal addMeal={this.handleMealAddition}></AddMeal>
         </div>
+
+        <MealList meals={this.filteredMeals} />
         
-        {this.state.meals.map(meal => {
-              return (
-                <MealBox  
-                  name={meal.name}
-                  img={meal.image}
-                  calories={meal.calories}
-                ></MealBox>
-
-
-                
-              );
-            })}
-
-
-
-       
+    
       </div>
     );
   }
